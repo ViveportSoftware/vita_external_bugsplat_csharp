@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <RootNamespace>Htc.Vita.External.Bugsplat</RootNamespace>
+    <AssemblyName>Htc.Vita.External.Bugsplat.Windows</AssemblyName>
+    <TargetFrameworks>net45;netcoreapp3.1</TargetFrameworks>
+    <DebugType>portable</DebugType>
+    <IntermediateOutputPath>..\..\temp\$(Configuration)\$(AssemblyName)\obj</IntermediateOutputPath>
+    <OutputPath>..\..\temp\$(Configuration)\$(AssemblyName)\bin</OutputPath>
+    <!--
+    <DocumentationFile>..\..\temp\$(Configuration)\$(AssemblyName)\bin\$(AssemblyName).xml</DocumentationFile>
+    -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>6</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <UseWPF>true</UseWPF>
+    <Authors>HTC</Authors>
+    <PackageDescription>HTC Vita External Libraries for .NET platform (Bugsplat)</PackageDescription>
+    <PackageProjectUrl>https://github.com/ViveportSoftware/vita_external_bugsplat_csharp</PackageProjectUrl>
+    <PackageTags>htc;vita;bugsplat</PackageTags>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\generated\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Include="..\Htc.Vita.External.Bugsplat.Portable\BugSplatDotNetStandard\BugSplat.cs" Link="BugSplatDotNetStandard\BugSplat.cs" />
+    <Compile Include="..\Htc.Vita.External.Bugsplat.Portable\BugSplatDotNetStandard\BugSplatPostOptions.cs" Link="BugSplatDotNetStandard\BugSplatPostOptions.cs" />
+    <Compile Include="..\Htc.Vita.External.Bugsplat.Portable\BugSplatDotNetStandard\BugSplatUtils.cs" Link="BugSplatDotNetStandard\BugSplatUtils.cs" />
+  </ItemGroup>
+</Project>
