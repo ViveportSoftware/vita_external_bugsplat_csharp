@@ -1,11 +1,12 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Htc.Vita.External.Bugsplat.Portable", "Htc.Vita.External.Bugsplat.Portable\Htc.Vita.External.Bugsplat.Portable.csproj", "{180CC49D-6E96-4669-9DBF-B04D4B004AE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Htc.Vita.External.Bugsplat.Portable", "Htc.Vita.External.Bugsplat.Portable\Htc.Vita.External.Bugsplat.Portable.csproj", "{180CC49D-6E96-4669-9DBF-B04D4B004AE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Htc.Vita.External.Bugsplat.Windows", "Htc.Vita.External.Bugsplat.Windows\Htc.Vita.External.Bugsplat.Windows.csproj", "{2DBD8E55-A181-4549-80FC-99BAECC79F3B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Htc.Vita.External.Bugsplat.Tests", "Htc.Vita.External.Bugsplat.Tests\Htc.Vita.External.Bugsplat.Tests.csproj", "{AD455CD6-FF18-42C1-978D-F2326AEFB4D9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Htc.Vita.External.Bugsplat.Windows", "Htc.Vita.External.Bugsplat.Windows\Htc.Vita.External.Bugsplat.Windows.csproj", "{2DBD8E55-A181-4549-80FC-99BAECC79F3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +18,10 @@ Global
 		{180CC49D-6E96-4669-9DBF-B04D4B004AE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{180CC49D-6E96-4669-9DBF-B04D4B004AE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{180CC49D-6E96-4669-9DBF-B04D4B004AE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD455CD6-FF18-42C1-978D-F2326AEFB4D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD455CD6-FF18-42C1-978D-F2326AEFB4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD455CD6-FF18-42C1-978D-F2326AEFB4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD455CD6-FF18-42C1-978D-F2326AEFB4D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2DBD8E55-A181-4549-80FC-99BAECC79F3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DBD8E55-A181-4549-80FC-99BAECC79F3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DBD8E55-A181-4549-80FC-99BAECC79F3B}.Release|Any CPU.ActiveCfg = Release|Any CPU

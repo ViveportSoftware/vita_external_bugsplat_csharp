@@ -28,5 +28,6 @@
     <Compile Include="..\Htc.Vita.External.Bugsplat.Portable\BugSplatDotNetStandard\BugSplat.cs" Link="BugSplatDotNetStandard\BugSplat.cs" />
     <Compile Include="..\Htc.Vita.External.Bugsplat.Portable\BugSplatDotNetStandard\BugSplatPostOptions.cs" Link="BugSplatDotNetStandard\BugSplatPostOptions.cs" />
     <Compile Include="..\Htc.Vita.External.Bugsplat.Portable\BugSplatDotNetStandard\BugSplatUtils.cs" Link="BugSplatDotNetStandard\BugSplatUtils.cs" />
+    <Compile Include="..\Htc.Vita.External.Bugsplat.Portable\CrashReporter.Portable.cs" Link="CrashReporter.Portable.cs" />
   </ItemGroup>
 </Project>

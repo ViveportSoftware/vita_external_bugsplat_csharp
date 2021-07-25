@@ -1,4 +1,6 @@
+#addin "nuget:?package=Cake.Coverlet&version=2.5.1"
 #addin "nuget:?package=Cake.Git&version=0.22.0"
+#addin "nuget:?package=Cake.ReSharperReports&version=0.11.1"
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -7,6 +9,9 @@
 var configuration = Argument("configuration", "Debug");
 var revision = EnvironmentVariable("BUILD_NUMBER") ?? Argument("revision", "9999");
 var target = Argument("target", "Default");
+var buildWithDupFinder = EnvironmentVariable("BUILD_WITH_DUPFINDER") ?? "ON";
+var buildWithInspectCode = EnvironmentVariable("BUILD_WITH_INSPECTCODE") ?? "ON";
+var buildWithUnitTesting = EnvironmentVariable("BUILD_WITH_UNITTESTING") ?? "ON";
 
 
 //////////////////////////////////////////////////////////////////////
@@ -54,6 +59,14 @@ var generatedDir = Directory("./source/generated");
 var packagesDir = Directory("./source/packages");
 var nugetDir = distDir + Directory(configuration) + Directory("nuget");
 var homeDir = Directory(EnvironmentVariable("USERPROFILE") ?? EnvironmentVariable("HOME"));
+var reportDotCoverDirAnyCPU = distDir + Directory(configuration) + Directory("report/dotCover/AnyCPU");
+var reportDotCoverDirX86 = distDir + Directory(configuration) + Directory("report/dotCover/x86");
+var reportOpenCoverDirAnyCPU = distDir + Directory(configuration) + Directory("report/OpenCover/AnyCPU");
+var reportOpenCoverDirX86 = distDir + Directory(configuration) + Directory("report/OpenCover/x86");
+var reportXUnitDirAnyCPU = distDir + Directory(configuration) + Directory("report/xUnit/AnyCPU");
+var reportXUnitDirX86 = distDir + Directory(configuration) + Directory("report/xUnit/x86");
+var reportReSharperDupFinder = distDir + Directory(configuration) + Directory("report/ReSharper/DupFinder");
+var reportReSharperInspectCode = distDir + Directory(configuration) + Directory("report/ReSharper/InspectCode");
 
 // Define signing key, password and timestamp server
 var signKeyEnc00 = EnvironmentVariable("SIGNKEYENC00");
@@ -146,10 +159,134 @@ Task("Build-Assemblies")
     );
 });
 
+Task("Run-Unit-Tests-1")
+    .WithCriteria(() => "ON".Equals(buildWithUnitTesting))
+    .IsDependentOn("Build-Assemblies")
+    .Does(() =>
+{
+    CreateDirectory(reportXUnitDirAnyCPU);
+    var testFilePattern = $"./temp/{configuration}/{product}.Tests/bin/AnyCPU/net452/*.Tests.dll";
+    var xUnit2Settings = new XUnit2Settings
+    {
+            HtmlReport = true,
+            NUnitReport = true,
+            OutputDirectory = reportXUnitDirAnyCPU,
+            Parallelism = ParallelismOption.None
+    };
+
+    if(IsRunningOnWindows())
+    {
+        DotCoverAnalyse(
+                tool =>
+                {
+                        tool.XUnit2(
+                                testFilePattern,
+                                xUnit2Settings
+                        );
+                },
+                new FilePath($"{reportDotCoverDirAnyCPU.ToString()}/{product}.html"),
+                new DotCoverAnalyseSettings
+                {
+                        ReportType = DotCoverReportType.HTML
+                }.WithFilter("+:*")
+                .WithFilter("-:xunit.*")
+                .WithFilter("-:*.NunitTest")
+                .WithFilter("-:*.Tests")
+                .WithFilter("-:*.XunitTest")
+        );
+    }
+    else
+    {
+        XUnit2(
+                testFilePattern,
+                xUnit2Settings
+        );
+    }
+});
+
+Task("Run-Unit-Tests-2")
+    .WithCriteria(() => "ON".Equals(buildWithUnitTesting))
+    .IsDependentOn("Run-Unit-Tests-1")
+    .Does(() =>
+{
+    CreateDirectory(reportOpenCoverDirAnyCPU);
+    DotNetCoreTest(
+            $"./source/{product}.Tests/{product}.Tests.csproj",
+            new DotNetCoreTestSettings
+            {
+                    Configuration = configuration
+            },
+            new CoverletSettings
+            {
+                    CollectCoverage = true,
+                    CoverletOutputDirectory = reportOpenCoverDirAnyCPU,
+                    CoverletOutputFormat = CoverletOutputFormat.opencover,
+                    CoverletOutputName = $"{product}.OpenCover.xml"
+            }
+    );
+});
+
+Task("Run-DupFinder")
+    .WithCriteria(() => "ON".Equals(buildWithDupFinder))
+    .IsDependentOn("Run-Unit-Tests-2")
+    .Does(() =>
+{
+    if(IsRunningOnWindows())
+    {
+        DupFinder(
+                new FilePath($"./source/{product}.sln"),
+                new DupFinderSettings
+                {
+                        OutputFile = new FilePath($"{reportReSharperDupFinder.ToString()}/{product}.xml"),
+                        ShowStats = true,
+                        ShowText = true,
+                        SkipOutputAnalysis = true,
+                        ThrowExceptionOnFindingDuplicates = false
+                }
+        );
+        ReSharperReports(
+                new FilePath($"{reportReSharperDupFinder.ToString()}/{product}.xml"),
+                new FilePath($"{reportReSharperDupFinder.ToString()}/{product}.html")
+        );
+    }
+    else
+    {
+        Warning($"DupFinder is only available on Windows");
+    }
+});
+
+Task("Run-InspectCode")
+    .WithCriteria(() => "ON".Equals(buildWithInspectCode))
+    .IsDependentOn("Run-DupFinder")
+    .Does(() =>
+{
+    if(IsRunningOnWindows())
+    {
+        InspectCode(
+                new FilePath($"./source/{product}.sln"),
+                new InspectCodeSettings
+                {
+                        OutputFile = new FilePath($"{reportReSharperInspectCode.ToString()}/{product}.xml"),
+                        SkipOutputAnalysis = true,
+                        SolutionWideAnalysis = true,
+                        ThrowExceptionOnFindingViolations = false,
+                        Verbosity = InspectCodeVerbosity.Off
+                }
+        );
+        ReSharperReports(
+                new FilePath($"{reportReSharperInspectCode.ToString()}/{product}.xml"),
+                new FilePath($"{reportReSharperInspectCode.ToString()}/{product}.html")
+        );
+    }
+    else
+    {
+        Warning($"InspectCode is only available on Windows");
+    }
+});
 
 Task("Sign-Assemblies")
     .WithCriteria(() => "Release".Equals(configuration) && !"NOTSET".Equals(signPass) && !"NOTSET".Equals(signKeyEnc))
-    .IsDependentOn("Build-Assemblies")
+    .IsDependentOn("Run-InspectCode")
     .Does(() =>
 {
     var currentSignTimestamp = DateTime.Now;
