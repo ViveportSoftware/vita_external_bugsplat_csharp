@@ -18,15 +18,15 @@ namespace Htc.Vita.External.Bugsplat.Tests
             catch (Exception ex)
             {
                 var sut = new BugSplat(
-                    "vita_2_htc_gmail_com",
-                    "MyDotNetCrasherTest",
-                    Assembly.GetExecutingAssembly().GetName().Version.ToString()
+                        "vita_2_htc_gmail_com",
+                        "MyDotNetCrasherTest",
+                        Assembly.GetExecutingAssembly().GetName().Version.ToString()
                 );
 
                 var response = sut.Post(ex).Result;
                 var body = response.Content.ReadAsStringAsync().Result;
 
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.BadRequest);
             }
         }
     }

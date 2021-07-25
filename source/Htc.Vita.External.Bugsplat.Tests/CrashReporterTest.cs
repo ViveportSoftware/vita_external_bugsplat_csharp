@@ -21,7 +21,7 @@ namespace Htc.Vita.External.Bugsplat.Tests
 
             Task.Run(() =>
             {
-                throw new InvalidOperationException();
+                    throw new InvalidOperationException();
             });
 
             SpinWait.SpinUntil(() => false, TimeSpan.FromSeconds(5));
