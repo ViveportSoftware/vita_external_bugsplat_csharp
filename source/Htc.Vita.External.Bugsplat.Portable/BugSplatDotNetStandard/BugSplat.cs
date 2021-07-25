@@ -102,7 +102,7 @@ namespace BugSplatDotNetStandard
                 body.Add(new StringContent(stackTrace), "callstack");
                 body.Add(new StringContent($"{(int)crashTypeId}"), "crashTypeId");
 
-                return await httpClient.PostAsync(uri, body);
+                return await httpClient.PostAsync(uri, body).ConfigureAwait(false);
             }
         }
 
@@ -115,7 +115,7 @@ namespace BugSplatDotNetStandard
         {
             ThrowIfArgumentIsNull(ex, "ex");
 
-            return await Post(ex.ToString(), options);
+            return await Post(ex.ToString(), options).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace BugSplatDotNetStandard
                 body.Add(new ByteArrayContent(minidump), "minidump", "minidump.dmp");
                 body.Add(new StringContent($"{(int)crashTypeId}"), "crashTypeId");
 
-                return await httpClient.PostAsync(uri, body);
+                return await httpClient.PostAsync(uri, body).ConfigureAwait(false);
             }
         }
 
