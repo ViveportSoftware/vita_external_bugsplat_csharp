@@ -1,8 +1,8 @@
 # HTC Vita External Libraries for .NET platform (Htc.Vita.External.Bugsplat.\*)
 
-[![MyGet Badge](https://buildstats.info/myget/viveportsoftware/Htc.Vita.External.Bugsplat.Portable)](https://www.myget.org/feed/viveportsoftware/package/nuget/Htc.Vita.External.Bugsplat.Portable)
+[![NuGet Badge](https://buildstats.info/nuget/Htc.Vita.External.Bugsplat.Portable)](https://www.nuget.org/packages/Htc.Vita.External.Bugsplat.Portable/) [![MyGet Badge](https://buildstats.info/myget/viveportsoftware/Htc.Vita.External.Bugsplat.Portable)](https://www.myget.org/feed/viveportsoftware/package/nuget/Htc.Vita.External.Bugsplat.Portable)
 
-[![MyGet Badge](https://buildstats.info/myget/viveportsoftware/Htc.Vita.External.Bugsplat.Windows)](https://www.myget.org/feed/viveportsoftware/package/nuget/Htc.Vita.External.Bugsplat.Windows)
+[![NuGet Badge](https://buildstats.info/nuget/Htc.Vita.External.Bugsplat.Windows)](https://www.nuget.org/packages/Htc.Vita.External.Bugsplat.Windows/) [![MyGet Badge](https://buildstats.info/myget/viveportsoftware/Htc.Vita.External.Bugsplat.Windows)](https://www.myget.org/feed/viveportsoftware/package/nuget/Htc.Vita.External.Bugsplat.Windows)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/tkacn2r7vx18cm0s/branch/master?svg=true)](https://ci.appveyor.com/project/kenelin/vita-external-bugsplat-csharp/branch/master)
 
