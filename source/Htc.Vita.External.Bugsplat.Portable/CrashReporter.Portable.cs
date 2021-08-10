@@ -1,8 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Runtime.ExceptionServices;
 using System.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using BugSplatDotNetStandard;
 
@@ -100,8 +102,13 @@ namespace Htc.Vita.External.Bugsplat
                     _bugsplatAppName,
                     _bugsplatAppVersion
             );
+            var oldCulture = Thread.CurrentThread.CurrentCulture;
+            var oldUICulture = Thread.CurrentThread.CurrentUICulture;
             try
             {
+                var exceptionCulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentCulture = exceptionCulture;
+                Thread.CurrentThread.CurrentUICulture = exceptionCulture;
                 var response = bugSplat.Post(exception).Result;
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -111,6 +118,11 @@ namespace Htc.Vita.External.Bugsplat
             catch (Exception e)
             {
                 Trace.WriteLine(e);
+            }
+            finally
+            {
+                Thread.CurrentThread.CurrentCulture = oldCulture;
+                Thread.CurrentThread.CurrentUICulture = oldUICulture;
             }
         }
 
