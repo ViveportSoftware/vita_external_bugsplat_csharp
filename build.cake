@@ -1,6 +1,5 @@
 #addin "nuget:?package=Cake.Coverlet&version=2.5.1"
 #addin "nuget:?package=Cake.Git&version=0.22.0"
-#addin "nuget:?package=Cake.ReSharperReports&version=0.11.1"
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -9,8 +8,6 @@
 var configuration = Argument("configuration", "Debug");
 var revision = EnvironmentVariable("BUILD_NUMBER") ?? Argument("revision", "9999");
 var target = Argument("target", "Default");
-var buildWithDupFinder = EnvironmentVariable("BUILD_WITH_DUPFINDER") ?? "ON";
-var buildWithInspectCode = EnvironmentVariable("BUILD_WITH_INSPECTCODE") ?? "ON";
 var buildWithUnitTesting = EnvironmentVariable("BUILD_WITH_UNITTESTING") ?? "ON";
 
 
@@ -65,19 +62,9 @@ var reportOpenCoverDirAnyCPU = distDir + Directory(configuration) + Directory("r
 var reportOpenCoverDirX86 = distDir + Directory(configuration) + Directory("report/OpenCover/x86");
 var reportXUnitDirAnyCPU = distDir + Directory(configuration) + Directory("report/xUnit/AnyCPU");
 var reportXUnitDirX86 = distDir + Directory(configuration) + Directory("report/xUnit/x86");
-var reportReSharperDupFinder = distDir + Directory(configuration) + Directory("report/ReSharper/DupFinder");
-var reportReSharperInspectCode = distDir + Directory(configuration) + Directory("report/ReSharper/InspectCode");
 
 // Define signing key, password and timestamp server
-var signKeyEnc00 = EnvironmentVariable("SIGNKEYENC00");
-var signKeyEnc01 = EnvironmentVariable("SIGNKEYENC01");
-var signKeyEnc02 = EnvironmentVariable("SIGNKEYENC02");
-var signKeyEnc03 = EnvironmentVariable("SIGNKEYENC03");
-var signKeyEnc04 = EnvironmentVariable("SIGNKEYENC04");
-var signKeyEnc05 = EnvironmentVariable("SIGNKEYENC05");
-var signKeyEnc06 = EnvironmentVariable("SIGNKEYENC06");
-var signKeyEnc07 = EnvironmentVariable("SIGNKEYENC07");
-var signKeyEnc = EnvironmentVariable("SIGNKEYENC") ?? signKeyEnc00 + signKeyEnc01 + signKeyEnc02 + signKeyEnc03 + signKeyEnc04 + signKeyEnc05 + signKeyEnc06 + signKeyEnc07 ?? "NOTSET";
+var signKeyEnc = EnvironmentVariable("SIGNKEYENC") ?? "NOTSET";
 var signPass = EnvironmentVariable("SIGNPASS") ?? "NOTSET";
 var signSha1Uri = new Uri("http://timestamp.digicert.com");
 var signSha256Uri = new Uri("http://timestamp.digicert.com");
@@ -226,67 +213,9 @@ Task("Run-Unit-Tests-2")
     );
 });
 
-Task("Run-DupFinder")
-    .WithCriteria(() => "ON".Equals(buildWithDupFinder))
-    .IsDependentOn("Run-Unit-Tests-2")
-    .Does(() =>
-{
-    if(IsRunningOnWindows())
-    {
-        DupFinder(
-                new FilePath($"./source/{product}.sln"),
-                new DupFinderSettings
-                {
-                        OutputFile = new FilePath($"{reportReSharperDupFinder.ToString()}/{product}.xml"),
-                        ShowStats = true,
-                        ShowText = true,
-                        SkipOutputAnalysis = true,
-                        ThrowExceptionOnFindingDuplicates = false
-                }
-        );
-        ReSharperReports(
-                new FilePath($"{reportReSharperDupFinder.ToString()}/{product}.xml"),
-                new FilePath($"{reportReSharperDupFinder.ToString()}/{product}.html")
-        );
-    }
-    else
-    {
-        Warning($"DupFinder is only available on Windows");
-    }
-});
-
-Task("Run-InspectCode")
-    .WithCriteria(() => "ON".Equals(buildWithInspectCode))
-    .IsDependentOn("Run-DupFinder")
-    .Does(() =>
-{
-    if(IsRunningOnWindows())
-    {
-        InspectCode(
-                new FilePath($"./source/{product}.sln"),
-                new InspectCodeSettings
-                {
-                        OutputFile = new FilePath($"{reportReSharperInspectCode.ToString()}/{product}.xml"),
-                        SkipOutputAnalysis = true,
-                        SolutionWideAnalysis = true,
-                        ThrowExceptionOnFindingViolations = false,
-                        Verbosity = InspectCodeVerbosity.Off
-                }
-        );
-        ReSharperReports(
-                new FilePath($"{reportReSharperInspectCode.ToString()}/{product}.xml"),
-                new FilePath($"{reportReSharperInspectCode.ToString()}/{product}.html")
-        );
-    }
-    else
-    {
-        Warning($"InspectCode is only available on Windows");
-    }
-});
-
 Task("Sign-Assemblies")
     .WithCriteria(() => "Release".Equals(configuration) && !"NOTSET".Equals(signPass) && !"NOTSET".Equals(signKeyEnc))
-    .IsDependentOn("Run-InspectCode")
+    .IsDependentOn("Run-Unit-Tests-2")
     .Does(() =>
 {
     var currentSignTimestamp = DateTime.Now;
